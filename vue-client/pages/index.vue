@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-file-input accept="video/*" @change="handleFile"></v-file-input>
 
     <div v-if="tricks">
