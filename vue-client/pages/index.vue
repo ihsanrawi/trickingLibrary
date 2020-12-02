@@ -47,13 +47,13 @@
         await this.createTrick({trick: {name: this.trickName}});
         this.trickName = ""
       },
-      // async handleFile(file){
-      //   if(!file) return;
-      //   const form = new FormData();
-      //   form.append("video", file)
-      //   const result = await Axios.post("http://localhost:5000/api/videos", form);
-      //   console.log("Result: ", result)
-      // }
+      async handleFile(file){
+        if(!file) return;
+        const form = new FormData();
+        form.append("video", file)
+        const result = await Axios.post("http://localhost:5000/api/videos/UploadVideo", form);
+        console.log("Result: ", result)
+      }
     }
     // async fetch (){
     //   await this.$store.dispatch('fetchMessage');
