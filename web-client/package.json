@@ -1,6 +1,8 @@
 {
-  "name": "vue-client",
+  "name": "web-client",
   "version": "1.0.0",
+  "description": "My swell Nuxt.js project",
+  "author": "Anton Wieslander",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -9,12 +11,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.2",
-    "core-js": "^3.6.5",
-    "nuxt": "^2.14.6"
+    "nuxt": "^2.0.0",
+    "@nuxtjs/axios": "^5.3.6"
   },
   "devDependencies": {
-    "@nuxt/types": "^2.14.9",
-    "@nuxtjs/vuetify": "^1.11.2"
+    "@nuxt/types": "^0.7.9",
+    "@nuxtjs/vuetify": "^1.0.0"
   }
 }
