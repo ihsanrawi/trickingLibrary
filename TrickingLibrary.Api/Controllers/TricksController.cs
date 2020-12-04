@@ -1,42 +1,61 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TrickingLibrary.Api.Models;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Mvc;
+using TrickingLibrary.Data;
+using TrickingLibrary.Models;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/tricks")]
     public class TricksController : ControllerBase
     {
-        private readonly TrickyStore _store;
+        private readonly AppDbContext _ctx;
 
-        public TricksController(TrickyStore store)
+        public TricksController(AppDbContext ctx)
         {
-            _store = store;
+            _ctx = ctx;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(_store.GetAll);
-        }
+        public IEnumerable<Trick> All() => _ctx.Tricks.ToList();
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
-        {
-            return Ok(_store.GetAll.FirstOrDefault(x => x.Id.Equals(id)));
-        }
+        public Trick Get(int id) => _ctx.Tricks.FirstOrDefault(x => x.Id.Equals(id));
+
+        [HttpGet("{trickId}/submissions")]
+        public IEnumerable<Submission> ListSubmissionsForTrick(int trickId) =>
+            _ctx.Submissions.Where(x => x.TrickId.Equals(trickId)).ToList();
 
         [HttpPost]
-        public IActionResult Create([FromBody] Trick trick)
+        public async Task<Trick> Create([FromBody] Trick trick)
         {
-            _store.Add(trick);
+           _ctx.Add(trick);
+           await _ctx.SaveChangesAsync();
+           return trick;
+        }
+
+        [HttpPut]
+        public async Task<Trick> Update([FromBody] Trick trick)
+        {
+            if (trick.Id == 0)
+            {
+                return null;
+            }
+
+            _ctx.Add(trick);
+            await _ctx.SaveChangesAsync();
+            return trick;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var trick = _ctx.Tricks.FirstOrDefault(x => x.Id.Equals(id));
+            trick.Deleted = true;
+            await _ctx.SaveChangesAsync();
             return Ok();
         }
     }
-}

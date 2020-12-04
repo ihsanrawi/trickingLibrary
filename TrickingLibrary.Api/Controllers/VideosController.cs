@@ -1,8 +1,3 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +25,6 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpPost]
-        [Route("UploadVideo")]
         public async Task<IActionResult> UploadVideo(IFormFile video)
         {
             var mime = video.FileName.Split('.').Last();
@@ -45,4 +39,3 @@ namespace TrickingLibrary.Api.Controllers
             return Ok(fileName);
         }
     }
-}
