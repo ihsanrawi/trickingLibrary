@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -8,9 +9,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-
+    [Route("api/videos")]
     public class VideosController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;

@@ -15,16 +15,16 @@ namespace TrickingLibrary.Api
     public class Startup
     {
         private const string AllCors = "All";
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Dev"));
 
-            services.AddCors(options => options.AddPolicy(
-                                    AllCors, build => build.AllowAnyHeader()
-                                                        .AllowAnyOrigin()
-                                                        .AllowAnyMethod()));
+            services.AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
+                                                                                 .AllowAnyOrigin()
+                                                                                 .AllowAnyMethod()));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -35,6 +35,7 @@ namespace TrickingLibrary.Api
             }
 
             app.UseCors(AllCors);
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
