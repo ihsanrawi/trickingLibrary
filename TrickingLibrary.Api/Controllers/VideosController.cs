@@ -1,12 +1,16 @@
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+
     public class VideosController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;
@@ -39,3 +43,4 @@ namespace TrickingLibrary.Api.Controllers
             return Ok(fileName);
         }
     }
+}

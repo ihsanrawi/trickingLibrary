@@ -32,9 +32,9 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPost]
         public async Task<Trick> Create([FromBody] Trick trick)
         {
-           _ctx.Add(trick);
-           await _ctx.SaveChangesAsync();
-           return trick;
+            _ctx.Add(trick);
+            await _ctx.SaveChangesAsync();
+            return trick;
         }
 
         [HttpPut]
@@ -59,3 +59,4 @@ namespace TrickingLibrary.Api.Controllers
             return Ok();
         }
     }
+}
