@@ -6,8 +6,7 @@ namespace TrickingLibrary.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        //Todo: Do we need this??
-        public Difficulty Difficulty { get; set; }
+        public string Difficulty { get; set; }
 
         public IList<TrickRelationship> Prerequisites { get; set; }
         public IList<TrickRelationship> Progressions { get; set; }
