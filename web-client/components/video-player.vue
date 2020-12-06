@@ -35,7 +35,7 @@
   .video-container {
     display: flex;
     position: relative;
-    width: 480px;
+    width: 100%;
 
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
@@ -58,7 +58,7 @@
     video {
       width: 100%;
       z-index: 1;
-      
+
       border-top-left-radius: inherit;
       border-top-right-radius: inherit;
     }

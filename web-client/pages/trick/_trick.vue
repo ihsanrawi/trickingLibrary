@@ -1,15 +1,16 @@
 <template>
-  <div class="d-flex mt-3 justify-center align-start">
-    <div class="mx-3" v-if="submissions">
-      <div v-for="i in 10">
-        <v-card class="mb-3" v-for="submission in submissions" :key="`${i}-${trick.id}-${submission.id}`">
-          <video-player :video="submission.video"/>
-          <v-card-text>{{submission.description}}</v-card-text>
-        </v-card>
+  <item-content-layout>
+    <template v-slot:content>
+      <div v-if="submissions">
+        <div v-for="i in 10">
+          <v-card class="mb-3" v-for="submission in submissions" :key="`${i}-${trick.id}-${submission.id}`">
+            <video-player :video="submission.video"/>
+            <v-card-text>{{submission.description}}</v-card-text>
+          </v-card>
+        </div>
       </div>
-    </div>
-
-    <v-sheet class="pa-3 ma-2 sticky">
+    </template>
+    <template v-slot:item>
       <div class="text-h5">
         <span>{{ trick.name }}</span>
         <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.id}`">
@@ -29,16 +30,17 @@
           </v-chip>
         </v-chip-group>
       </div>
-    </v-sheet>
-  </div>
+    </template>
+  </item-content-layout>
 </template>
 
 <script>
   import {mapState, mapGetters} from 'vuex';
   import VideoPlayer from "@/components/video-player";
+  import ItemContentLayout from "@/components/item-content-layout";
 
   export default {
-    components: {VideoPlayer},
+    components: {ItemContentLayout, VideoPlayer},
     data: () => ({
       trick: null,
       difficulty: null,
