@@ -3,7 +3,7 @@
 
     <div v-if="tricks">
       <div v-for="trick in tricks">
-        <v-btn :to="`/trick/${trick.id}`">{{trick.name}}</v-btn>
+        <v-btn class="ma-2" :to="`/trick/${trick.id}`">{{trick.name}}</v-btn>
       </div>
     </div>
 

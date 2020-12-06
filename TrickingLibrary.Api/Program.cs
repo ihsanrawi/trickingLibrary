@@ -50,6 +50,20 @@ namespace TrickingLibrary.Api
                         TrickCategories = new List<TrickCategory>{new TrickCategory{CategoryId = "flip"}},
                         Prerequisites = new List<TrickRelationship>{new TrickRelationship{PrerequisiteId = "backwards-roll"}}
                     });
+
+                    ctx.Add(new Submission
+                    {
+                        TrickId = "back-flip",
+                        Description = "Test description. I'm good.",
+                        Video = "xwhjec5e.1gd.mp4"
+                    });
+                    
+                    ctx.Add(new Submission
+                    {
+                        TrickId = "back-flip",
+                        Description = "Test description. I'm too good.",
+                        Video = "uy2l2knu.dtq.mp4"
+                    });
                     
                     ctx.SaveChanges();
                 }
