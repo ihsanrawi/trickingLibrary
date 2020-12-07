@@ -39,7 +39,7 @@ namespace TrickingLibrary.Api
                         Name = "Backwards Roll", 
                         Description = "This is a backward roll",
                         Difficulty = "easy",
-                        TrickCategories = new List<TrickCategory>{new TrickCategory{CategoryId = "flip"}}
+                        TrickCategories = new List<TrickCategory>{new TrickCategory{CategoryId = "flip"}},
                     });
                     ctx.Add(new Trick
                     {
@@ -48,21 +48,23 @@ namespace TrickingLibrary.Api
                         Description = "This is a test back flip",
                         Difficulty = "medium",
                         TrickCategories = new List<TrickCategory>{new TrickCategory{CategoryId = "flip"}},
-                        Prerequisites = new List<TrickRelationship>{new TrickRelationship{PrerequisiteId = "backwards-roll"}}
+                        Prerequisites = new List<TrickRelationship>{new TrickRelationship{PrerequisiteId = "backwards-roll"}},
                     });
 
                     ctx.Add(new Submission
                     {
                         TrickId = "back-flip",
                         Description = "Test description. I'm good.",
-                        Video = "xwhjec5e.1gd.mp4"
+                        Video = "xwhjec5e.1gd.mp4",
+                        VideoProcessed = true,
                     });
                     
                     ctx.Add(new Submission
                     {
                         TrickId = "back-flip",
                         Description = "Test description. I'm too good.",
-                        Video = "uy2l2knu.dtq.mp4"
+                        Video = "uy2l2knu.dtq.mp4",
+                        VideoProcessed = true,
                     });
                     
                     ctx.SaveChanges();
