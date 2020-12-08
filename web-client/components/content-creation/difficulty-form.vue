@@ -1,6 +1,12 @@
 <template>
   <v-card>
-    <v-card-title>Create Difficulty</v-card-title>
+    <v-card-title>
+      Create Difficulty
+      <v-spacer/>
+      <v-btn icon @click="close">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-card-title>
     <v-card-text>
       <v-text-field label="Name" v-model="form.name"></v-text-field>
       <v-text-field label="Description" v-model="form.description"></v-text-field>
@@ -13,6 +19,8 @@
 
 <script>
 
+  import {close} from "@/components/content-creation/_shared";
+
   const initState = () => ({
     form : {
       name: "",
@@ -22,6 +30,7 @@
 
   export default {
     name: "difficulty-form",
+    mixins:[close],
     data: initState,
     methods: {
       save() {
