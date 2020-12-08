@@ -11,21 +11,24 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TrickingLibrary.Data;
 
-namespace TrickingLibrary.Api.BackgroundServices
+namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
 {
     public class VideoEditingBackgroundService : BackgroundService
     {
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<VideoEditingBackgroundService> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly VideoManager _videoManager;
         private readonly ChannelReader<EditVideoMessage> _chanelReader;
 
         public VideoEditingBackgroundService(IWebHostEnvironment env, Channel<EditVideoMessage> channel
-            , ILogger<VideoEditingBackgroundService> logger, IServiceProvider serviceProvider)
+            , ILogger<VideoEditingBackgroundService> logger, IServiceProvider serviceProvider
+            , VideoManager videoManager)
         {
             _env = env;
             _logger = logger;
             _serviceProvider = serviceProvider;
+            _videoManager = videoManager;
             _chanelReader = channel.Reader;
         }
         
@@ -37,22 +40,28 @@ namespace TrickingLibrary.Api.BackgroundServices
 
                 try
                 {
-                    var inputPath = Path.Combine(_env.WebRootPath, message.Input);
-                    var outputName = $"c{DateTime.Now.Ticks}.mp4";
-                    var outputPath = Path.Combine(_env.WebRootPath, outputName);
+                    var inputPath = _videoManager.TemporarySavePath(message.Input);
+                    var outputName = _videoManager.GenerateConvertedFileName();
+                    var outputPath = _videoManager.TemporarySavePath(outputName);
+                    
                     var startInfo = new ProcessStartInfo
                     {
                         FileName = Path.Combine(_env.ContentRootPath, "ffmpeg", "ffmpeg.exe"),
                         Arguments = $"-y -i {inputPath} -an -vf scale=540x380 {outputPath}",
-                        WorkingDirectory = _env.WebRootPath,
-                        CreateNoWindow = true,
+                        WorkingDirectory = _videoManager.WorkingDirectory,
+                        CreateNoWindow = true, 
                         UseShellExecute = false,
                     };
 
-                    using (var process = new Process { StartInfo = startInfo})
+                    using (var process = new Process {StartInfo = startInfo})
                     {
                         process.Start();
                         process.WaitForExit();
+                    }
+
+                    if (!_videoManager.TemporaryVideoExists(outputName))
+                    {
+                        throw new Exception("FFMPEG failed to generate converted video");
                     }
 
                     using (var scope = _serviceProvider.CreateScope())
@@ -60,26 +69,22 @@ namespace TrickingLibrary.Api.BackgroundServices
                         var ctx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                         var submission = ctx.Submissions.FirstOrDefault(x => x.Id.Equals(message.SubmissionId));
-                        // Todo: Clean up if error
+
                         submission.Video = outputName;
                         submission.VideoProcessed = true;
-                        
+
                         await ctx.SaveChangesAsync(stoppingToken);
-                        // Todo: Clean up after success
                     }
                 }
                 catch (Exception e)
                 {
-                    // Todo: Clean up if error
                     _logger.LogError(e, "Video Processing Failed for {0}", message.Input);
+                }
+                finally
+                {
+                    _videoManager.DeleteTemporaryVideo(message.Input);
                 }
             }
         }
-    }
-
-    public class EditVideoMessage
-    {
-        public int SubmissionId { get; set; }
-        public string Input { get; set; }
     }
 }

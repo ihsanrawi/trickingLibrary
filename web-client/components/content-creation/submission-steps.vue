@@ -62,14 +62,6 @@ export default {
   data: initState,
   computed: {
     ...mapGetters('tricks', ['trickItems']),
-    ...mapState('video-upload', ['active']),
-  },
-  watch: {
-    'active': function(newValue) {
-      if(!newValue){
-        Object.assign(this.$data, initState())
-      }
-    }
   },
   methods: {
     ...mapMutations('video-upload', ['hide']),
