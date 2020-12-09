@@ -2,12 +2,10 @@
   <item-content-layout>
     <template v-slot:content>
       <div v-if="submissions">
-        <div v-for="i in 10">
-          <v-card class="mb-3" v-for="submission in submissions" :key="`${i}-${trick.id}-${submission.id}`">
-            <video-player :video="submission.video"/>
-            <v-card-text>{{submission.description}}</v-card-text>
-          </v-card>
-        </div>
+        <v-card class="mb-3" v-for="submission in submissions" :key="`${trick.id}-${submission.id}`">
+          <video-player :video="submission.video" :key="`v-${trick.id}-${submission.id}`"/>
+          <v-card-text>{{submission.description}}</v-card-text>
+        </v-card>
       </div>
     </template>
     <template v-slot:item>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TrickingLibrary.Api.BackgroundServices;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
+using TrickingLibrary.Api.Form;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
@@ -22,6 +23,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
+        // Todo: Might need to use Include() in the linq
         public IEnumerable<Submission> All() => _ctx.Submissions
                                                     .Where(x => x.VideoProcessed)
                                                     .ToList();
@@ -30,14 +32,22 @@ namespace TrickingLibrary.Api.Controllers
         public Submission Get(int id) => _ctx.Submissions.FirstOrDefault(x => x.Id.Equals(id));
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Submission submission
+        public async Task<IActionResult> Create([FromBody] SubmissionForm submissionForm
                 , [FromServices] Channel<EditVideoMessage> channel
                 , [FromServices] VideoManager videoManager)
         {
-            if (!videoManager.TemporaryVideoExists(submission.Video))
+            if (!videoManager.TemporaryVideoExists(submissionForm.Video))
             {
                 return BadRequest();
             }
+
+            // Todo: Automapper??
+            var submission = new Submission
+            {
+                TrickId =  submissionForm.TrickId,
+                Description = submissionForm.Description,
+                VideoProcessed = false,
+            };
             
             submission.VideoProcessed = false;
            _ctx.Add(submission);
@@ -45,7 +55,7 @@ namespace TrickingLibrary.Api.Controllers
            await channel.Writer.WriteAsync(new EditVideoMessage
            {
                SubmissionId = submission.Id,
-               Input = submission.Video,
+               Input = submissionForm.Video,
            });
            
            return Ok(submission);
