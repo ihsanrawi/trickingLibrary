@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api
 {
@@ -43,6 +44,14 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new Trick
                     {
+                        Id= "forwards-roll",
+                        Name = "Forwards Roll", 
+                        Description = "This is a forward roll",
+                        Difficulty = "easy",
+                        TrickCategories = new List<TrickCategory>{new TrickCategory{CategoryId = "flip"}},
+                    });
+                    ctx.Add(new Trick
+                    {
                         Id= "back-flip",
                         Name = "Back Flip", 
                         Description = "This is a test back flip",
@@ -51,21 +60,35 @@ namespace TrickingLibrary.Api
                         Prerequisites = new List<TrickRelationship>{new TrickRelationship{PrerequisiteId = "backwards-roll"}},
                     });
 
-                    // ctx.Add(new Submission
-                    // {
-                    //     TrickId = "back-flip",
-                    //     Description = "Test description. I'm good.",
-                    //     Video = "xwhjec5e.1gd.mp4",
-                    //     VideoProcessed = true,
-                    // });
-                    //
-                    // ctx.Add(new Submission
-                    // {
-                    //     TrickId = "back-flip",
-                    //     Description = "Test description. I'm too good.",
-                    //     Video = "uy2l2knu.dtq.mp4",
-                    //     VideoProcessed = true,
-                    // });
+                    ctx.Add(new Submission
+                    {
+                        TrickId = "back-flip",
+                        Description = "Test description. I'm good in backflipping.",
+                        Video = new Video
+                        {
+                            VideoLink = "one.mp4",
+                            ThumbLink = "one.png"
+                        },
+                        VideoProcessed = true,
+                    });
+                    
+                    ctx.Add(new Submission
+                    {
+                        TrickId = "backwards-roll",
+                        Description = "Test description. I'm too good.",
+                        Video = new Video
+                        {
+                            VideoLink = "two.mp4",
+                            ThumbLink = "two.jpg"
+                        },
+                        VideoProcessed = true,
+                    });
+
+                    ctx.Add(new ModerationItem
+                    {
+                        Target = "forwards-roll",
+                        Type = ModerationTypes.Trick
+                    });
                     
                     ctx.SaveChanges();
                 }

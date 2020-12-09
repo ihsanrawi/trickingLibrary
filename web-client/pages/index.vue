@@ -4,7 +4,9 @@
       <div class="d-flex flex-column align-center">
         <p class="text-h5">{{ section.title }}</p>
         <div>
-          <v-btn class="ma-2" v-for="item in section.collection" :to="section.routeFactory(item.id)">{{item.name}}</v-btn>
+          <v-btn class="ma-2" v-for="item in section.collection"
+                 :key="`${section.title}-${item.id}`"
+                 :to="section.routeFactory(item.id)">{{item.name}}</v-btn>
         </div>
       </div>
       <v-divider class="my-5"></v-divider>
