@@ -7,14 +7,14 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      items: []
-    }),
-    async fetch() {
-      this.items = await this.$axios.$get("/api/moderation-items")
-    }
+export default {
+  data: () => ({
+    items: []
+  }),
+  async fetch() {
+    this.items = await this.$axios.$get("/api/moderation-items")
   }
+}
 </script>
 
 <style scoped>
