@@ -7,7 +7,7 @@
 
     </div>
 
-    <comment-input v-if="replying" @send="(c) => $emit('send', c)" @cancel="replying = false"/>
+    <comment-input label="Reply" v-if="replying" @send="(c) => $emit('send', c)" @cancel="replying = false"/>
   </div>
 </template>
 
