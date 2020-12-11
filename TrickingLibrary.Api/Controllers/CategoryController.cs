@@ -22,10 +22,11 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpGet]
         public IEnumerable<Category> All() => _ctx.Categories.ToList();
-        
+
         [HttpGet("{id}")]
-        public Category Get(string id) => _ctx.Categories.
-            FirstOrDefault(x => x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+        public Category Get(string id) =>
+            _ctx.Categories
+                .FirstOrDefault(x => x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
         [HttpGet("{id}/tricks")]
         public IEnumerable<Trick> ListCategoryTricks(string id) =>
@@ -39,10 +40,9 @@ namespace TrickingLibrary.Api.Controllers
         public async Task<Category> Create([FromBody] Category category)
         {
             category.Id = category.Name.Replace(" ", "-").ToLowerInvariant();
-            
-           _ctx.Add(category);
-           await _ctx.SaveChangesAsync();
-           return category;
+            _ctx.Add(category);
+            await _ctx.SaveChangesAsync();
+            return category;
         }
     }
 }

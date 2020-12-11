@@ -3,3 +3,7 @@
 bin/
 obj/
 TrickingLibrary.Api/wwwroot
+TrickingLibrary.Api/ffmpeg/ffmpeg.exe
+TrickingLibrary.Api/tempkey.jwk
+*.user
+TrickingLibrary.Api11

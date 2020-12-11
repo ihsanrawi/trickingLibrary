@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
-using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api.Controllers
 {
@@ -42,13 +40,13 @@ namespace TrickingLibrary.Api.Controllers
             var regex = new Regex(@"\B(?<tag>@[a-zA-Z0-9-_]+)");
 
             reply.HtmlContent = regex.Matches(reply.Content)
-                .Aggregate(reply.Content,
-                    (content, match) =>
-                    {
-                        var tag = match.Groups["tag"].Value;
-                        return content
-                            .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
-                    });
+                                     .Aggregate(reply.Content,
+                                                (content, match) =>
+                                                {
+                                                    var tag = match.Groups["tag"].Value;
+                                                    return content
+                                                       .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
+                                                });
 
             comment.Replies.Add(reply);
 

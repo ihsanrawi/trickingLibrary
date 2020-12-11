@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -19,9 +19,10 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
             _env = env;
         }
 
-        public string FFMPEGPath => Path.Combine(_env.ContentRootPath, "ffmpeg", "ffmpeg.exe");
         private string WorkingDirectory => _env.WebRootPath;
-        
+
+        public string FFMPEGPath => Path.Combine(_env.ContentRootPath, "ffmpeg", "ffmpeg.exe");
+
         public bool Temporary(string fileName)
         {
             return fileName.StartsWith(TempPrefix);
@@ -32,30 +33,29 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
             var path = TemporarySavePath(fileName);
             return File.Exists(path);
         }
-        
+
         public void DeleteTemporaryFile(string fileName)
         {
             var path = TemporarySavePath(fileName);
-
             if (File.Exists(path))
             {
                 File.Delete(path);
             }
         }
-        
+
         public string DevVideoPath(string fileName)
         {
-            return !_env.IsDevelopment() ? null : Path.Combine(_env.WebRootPath, fileName);
+            return !_env.IsDevelopment() ? null : Path.Combine(WorkingDirectory, fileName);
         }
 
-        public string GenerateConvertedFileName() => $"{ConvertedPrefix}{DateTime.Now.Ticks}.mp4"; 
-        public string GenerateThumbnailFileName() => $"{ThumbnailPrefix}{DateTime.Now.Ticks}.jpg"; 
+        public string GenerateConvertedFileName() => $"{ConvertedPrefix}{DateTime.Now.Ticks}.mp4";
+        public string GenerateThumbnailFileName() => $"{ThumbnailPrefix}{DateTime.Now.Ticks}.jpg";
 
         public async Task<string> SaveTemporaryVideo(IFormFile video)
         {
-            var fileName= string.Concat(TempPrefix, DateTime.Now.Ticks, Path.GetExtension(video.FileName));
+            var fileName = string.Concat(TempPrefix, DateTime.Now.Ticks, Path.GetExtension(video.FileName));
             var savePath = TemporarySavePath(fileName);
-            
+
             await using (var fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
             {
                 await video.CopyToAsync(fileStream);

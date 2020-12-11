@@ -1,4 +1,4 @@
-namespace TrickingLibrary.Api.Form
+﻿namespace TrickingLibrary.Api.Form
 {
     public class SubmissionForm
     {

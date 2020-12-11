@@ -1,7 +1,13 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using TrickingLibrary.Api.BackgroundServices;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 
@@ -21,12 +27,11 @@ namespace TrickingLibrary.Api.Controllers
         public IActionResult GetVideo(string video)
         {
             var savePath = _videoManager.DevVideoPath(video);
-
             if (string.IsNullOrEmpty(savePath))
             {
                 return BadRequest();
             }
-            
+
             return new FileStreamResult(new FileStream(savePath, FileMode.Open, FileAccess.Read), "video/*");
         }
 
@@ -48,9 +53,9 @@ namespace TrickingLibrary.Api.Controllers
             {
                 return NoContent();
             }
-            
+
             _videoManager.DeleteTemporaryFile(fileName);
-            
+
             return Ok();
         }
     }

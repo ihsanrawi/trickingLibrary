@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -25,14 +24,12 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpGet]
         public IEnumerable<ModerationItem> All() => _ctx.ModerationItems.ToList();
-        
+
         [HttpGet("{id}")]
-        public ModerationItem Get(int id) =>
-            _ctx.ModerationItems
-                .FirstOrDefault(x => x.Id.Equals(id));
+        public ModerationItem Get(int id) => _ctx.ModerationItems.FirstOrDefault(x => x.Id.Equals(id));
 
         [HttpGet("{id}/comments")]
-        public IEnumerable<Object> GetComments(int id) =>
+        public IEnumerable<object> GetComments(int id) =>
             _ctx.Comments
                 .Where(x => x.ModerationItemId.Equals(id))
                 .Select(CommentViewModel.Projection)
@@ -41,21 +38,21 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPost("{id}/comments")]
         public async Task<IActionResult> Comment(int id, [FromBody] Comment comment)
         {
-            if (_ctx.ModerationItems.Any(x => x.Id == id))
+            if (!_ctx.ModerationItems.Any(x => x.Id == id))
             {
                 return NoContent();
             }
-            
+
             var regex = new Regex(@"\B(?<tag>@[a-zA-Z0-9-_]+)");
 
             comment.HtmlContent = regex.Matches(comment.Content)
-                .Aggregate(comment.Content,
-                    (content, match) =>
-                    {
-                        var tag = match.Groups["tag"].Value;
-                        return content
-                            .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
-                    });
+                                       .Aggregate(comment.Content,
+                                                  (content, match) =>
+                                                  {
+                                                      var tag = match.Groups["tag"].Value;
+                                                      return content
+                                                         .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
+                                                  });
             
             /*
             // another way of aggregating comment
@@ -69,13 +66,12 @@ namespace TrickingLibrary.Api.Controllers
             }*/
             
             comment.ModerationItemId = id;
-
             _ctx.Add(comment);
             await _ctx.SaveChangesAsync();
 
             return Ok(CommentViewModel.Create(comment));
         }
-        
+
         [HttpGet("{id}/reviews")]
         public IEnumerable<Review> GetReviews(int id) =>
             _ctx.Reviews

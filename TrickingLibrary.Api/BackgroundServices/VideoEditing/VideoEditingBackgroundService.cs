@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,16 +21,18 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
         private readonly VideoManager _videoManager;
         private readonly ChannelReader<EditVideoMessage> _channelReader;
 
-        public VideoEditingBackgroundService(Channel<EditVideoMessage> channel
-            , ILogger<VideoEditingBackgroundService> logger, IServiceProvider serviceProvider
-            , VideoManager videoManager)
+        public VideoEditingBackgroundService(
+            Channel<EditVideoMessage> channel,
+            ILogger<VideoEditingBackgroundService> logger,
+            IServiceProvider serviceProvider,
+            VideoManager videoManager)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _videoManager = videoManager;
             _channelReader = channel.Reader;
         }
-        
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (await _channelReader.WaitToReadAsync(stoppingToken))
@@ -41,7 +43,6 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
                 var outputThumbnailName = _videoManager.GenerateThumbnailFileName();
                 var outputConvertedPath = _videoManager.TemporarySavePath(outputConvertedName);
                 var outputThumbnailPath = _videoManager.TemporarySavePath(outputThumbnailName);
-                
                 try
                 {
                     var startInfo = new ProcessStartInfo
@@ -62,7 +63,7 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
                     {
                         throw new Exception("FFMPEG failed to generate converted video");
                     }
-                    
+
                     if (!_videoManager.TemporaryFileExists(outputThumbnailName))
                     {
                         throw new Exception("FFMPEG failed to generate thumbnail");
@@ -89,7 +90,6 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
                     _logger.LogError(e, "Video Processing Failed for {0}", message.Input);
                     _videoManager.DeleteTemporaryFile(outputConvertedName);
                     _videoManager.DeleteTemporaryFile(outputThumbnailName);
-
                 }
                 finally
                 {

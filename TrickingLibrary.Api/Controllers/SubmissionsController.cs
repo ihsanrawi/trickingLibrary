@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -23,18 +24,19 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        // Todo: Might need to use Include() in the linq
-        public IEnumerable<Submission> All() => _ctx.Submissions
-                                                    .Where(x => x.VideoProcessed)
-                                                    .ToList();
+        public IEnumerable<Submission> All() =>
+            _ctx.Submissions
+                .Where(x => x.VideoProcessed)
+                .ToList();
 
         [HttpGet("{id}")]
         public Submission Get(int id) => _ctx.Submissions.FirstOrDefault(x => x.Id.Equals(id));
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SubmissionForm submissionForm
-                , [FromServices] Channel<EditVideoMessage> channel
-                , [FromServices] VideoManager videoManager)
+        public async Task<IActionResult> Create(
+            [FromBody] SubmissionForm submissionForm,
+            [FromServices] Channel<EditVideoMessage> channel,
+            [FromServices] VideoManager videoManager)
         {
             if (!videoManager.TemporaryFileExists(submissionForm.Video))
             {
@@ -44,21 +46,19 @@ namespace TrickingLibrary.Api.Controllers
             // Todo: Automapper??
             var submission = new Submission
             {
-                TrickId =  submissionForm.TrickId,
+                TrickId = submissionForm.TrickId,
                 Description = submissionForm.Description,
                 VideoProcessed = false,
             };
-            
-            submission.VideoProcessed = false;
-           _ctx.Add(submission);
-           await _ctx.SaveChangesAsync();
-           await channel.Writer.WriteAsync(new EditVideoMessage
-           {
-               SubmissionId = submission.Id,
-               Input = submissionForm.Video,
-           });
-           
-           return Ok(submission);
+
+            _ctx.Add(submission);
+            await _ctx.SaveChangesAsync();
+            await channel.Writer.WriteAsync(new EditVideoMessage
+            {
+                SubmissionId = submission.Id,
+                Input = submissionForm.Video,
+            });
+            return Ok(submission);
         }
 
         [HttpPut]

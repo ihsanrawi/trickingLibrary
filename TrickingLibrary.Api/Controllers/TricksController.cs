@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.Form;
@@ -23,10 +25,21 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Object> All() => _ctx.Tricks.Select(TrickViewModels.Projection).ToList();
+        public IEnumerable<object> All() => _ctx.Tricks.Select(TrickViewModels.Projection).ToList();
+
+
+        [HttpGet("test")]
+        [Authorize(Policy = IdentityServerConstants.LocalApi.PolicyName)]
+        public string TestAuth() => "test";
+
+
+        [HttpGet("mod")]
+        [Authorize(Policy = TrickingLibraryConstants.Policies.Mod)]
+        public string ModAuth() => "mod";
+
 
         [HttpGet("{id}")]
-        public Object Get(string id) =>
+        public object Get(string id) =>
             _ctx.Tricks
                 .Where(x => x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase))
                 .Select(TrickViewModels.Projection)
@@ -40,24 +53,23 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpPost]
-        public async Task<Object> Create([FromBody] TrickForm trickForm)
+        public async Task<object> Create([FromBody] TrickForm trickForm)
         {
             var trick = new Trick
             {
                 Id = trickForm.Name.Replace(" ", "-").ToLowerInvariant(),
-                Name =  trickForm.Name,
-                Description =  trickForm.Description,
+                Name = trickForm.Name,
+                Description = trickForm.Description,
                 Difficulty = trickForm.Difficulty,
-                TrickCategories = trickForm.Categories.Select(x => new TrickCategory{CategoryId = x}).ToList()
+                TrickCategories = trickForm.Categories.Select(x => new TrickCategory {CategoryId = x}).ToList()
             };
-            
             _ctx.Add(trick);
             await _ctx.SaveChangesAsync();
             return TrickViewModels.Create(trick);
         }
 
         [HttpPut]
-        public async Task<Object> Update([FromBody] Trick trick)
+        public async Task<object> Update([FromBody] Trick trick)
         {
             if (string.IsNullOrEmpty(trick.Id))
             {

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using IdentityServer4;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,20 +33,19 @@ namespace TrickingLibrary.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Dev"));
-            
+
             AddIdentity(services);
-            
+
             services.AddControllers();
+
             services.AddRazorPages();
 
-            services.AddHostedService<VideoEditingBackgroundService>();
-            services.AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>());
-            services.AddSingleton<VideoManager>();
-
-            services.AddCors(options => options.AddPolicy(AllCors, build => build
-                .AllowAnyHeader()
-                .AllowAnyOrigin()
-                .AllowAnyMethod()));
+            services.AddHostedService<VideoEditingBackgroundService>()
+                .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
+                .AddSingleton<VideoManager>()
+                .AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()));
         }
 
         public void Configure(IApplicationBuilder app)
@@ -61,20 +62,20 @@ namespace TrickingLibrary.Api
             app.UseAuthentication();
 
             app.UseIdentityServer();
-            
-            // Auth here
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                
+
                 endpoints.MapRazorPages();
             });
         }
 
         private void AddIdentity(IServiceCollection services)
         {
-            services.AddDbContext<IdentityDbContext>(config => 
+            services.AddDbContext<IdentityDbContext>(config =>
                 config.UseInMemoryDatabase("DevIdentity"));
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -89,27 +90,29 @@ namespace TrickingLibrary.Api
                     }
                     else
                     {
-                        // Todo: Configure for production
+                        //todo configure for production
                     }
                 })
                 .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.LoginPath = "/Account/Login";
-            });
-            
+            services.ConfigureApplicationCookie(config => { config.LoginPath = "/Account/Login"; });
+
             var identityServerBuilder = services.AddIdentityServer();
+
             identityServerBuilder.AddAspNetIdentity<IdentityUser>();
-            
+
             if (_env.IsDevelopment())
             {
                 identityServerBuilder.AddInMemoryIdentityResources(new IdentityResource[]
                 {
                     new IdentityResources.OpenId(),
-                    new IdentityResources.Profile(), 
-                    
+                    new IdentityResources.Profile(),
+                });
+
+                identityServerBuilder.AddInMemoryApiScopes(new ApiScope[]
+                {
+                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName, new[] {ClaimTypes.Role}),
                 });
 
                 identityServerBuilder.AddInMemoryClients(new Client[]
@@ -118,20 +121,52 @@ namespace TrickingLibrary.Api
                     {
                         ClientId = "web-client",
                         AllowedGrantTypes = GrantTypes.Code,
-                        
-                        RedirectUris = new []{"http://localhost:3000"},
-                        PostLogoutRedirectUris = new []{"http://localhost:3000"},
-                        AllowedCorsOrigins = new []{"http://localhost:3000"},
-                        
+
+                        RedirectUris = new[] {"http://localhost:3000"},
+                        PostLogoutRedirectUris = new[] {"http://localhost:3000"},
+                        AllowedCorsOrigins = new[] {"http://localhost:3000"},
+
+                        AllowedScopes = new[]
+                        {
+                            IdentityServerConstants.StandardScopes.OpenId,
+                            IdentityServerConstants.StandardScopes.Profile,
+                            IdentityServerConstants.LocalApi.ScopeName,
+                        },
+
                         RequirePkce = true,
                         AllowAccessTokensViaBrowser = true,
                         RequireConsent = false,
                         RequireClientSecret = false,
-                    }, 
+                    },
                 });
 
                 identityServerBuilder.AddDeveloperSigningCredential();
             }
+
+            services.AddLocalApiAuthentication();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(TrickingLibraryConstants.Policies.Mod, policy =>
+                {
+                    var is4Policy = options.GetPolicy(IdentityServerConstants.LocalApi.PolicyName);
+                    policy.Combine(is4Policy);
+                    policy.RequireClaim(ClaimTypes.Role, TrickingLibraryConstants.Roles.Mod);
+                });
+            });
+        }
+    }
+
+    public struct TrickingLibraryConstants
+    {
+        public struct Policies
+        {
+            public const string Mod = nameof(Mod);
+        }
+
+        public struct Roles
+        {
+            public const string Mod = nameof(Mod);
         }
     }
 }
