@@ -40,13 +40,18 @@ export const mutations = {
 
 export const actions = {
   async fetchTricks({commit}){
-    const tricks = await this.$axios.$get("/api/tricks");
-    const difficulties = await this.$axios.$get("/api/difficulties");
-    const categories = await this.$axios.$get("/api/categories");
+    try {
+      const tricks = await this.$axios.$get("/api/tricks");
+      const difficulties = await this.$axios.$get("/api/difficulties");
+      const categories = await this.$axios.$get("/api/categories");
+      // console.log(tricks, difficulties, categories);
+      commit("setTricks", {tricks, difficulties, categories})
 
-    // console.log(tricks, difficulties, categories);
+    } catch (err) {
+      console.log(err)
+    }
 
-    commit("setTricks", {tricks, difficulties, categories})
+
   },
   createTrick({state, commit, dispatch}, {form}) {
     return this.$axios.$post("/api/tricks", form)
