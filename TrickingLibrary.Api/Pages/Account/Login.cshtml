@@ -2,15 +2,27 @@
 @model TrickingLibrary.Api.Pages.Account.Login
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Login";
+    Layout = "Shared/_Layout";
 }
 
 
 <form method="post">
+    <h3>Login</h3>
     <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl">
-    <input asp-for="Form.Username">
-    <span asp-validation-for="Form.Username"></span>
-    <input asp-for="Form.Password">
-    <span asp-validation-for="Form.Password"></span>
-    <button type="submit">Sign In</button>
+    <div class="field">
+        <label asp-for="Form.Username">Username</label>
+        <input asp-for="Form.Username">
+        <span asp-validation-for="Form.Username"></span>
+    </div>
+    <div class="field">
+
+        <label asp-for="Form.Password">Password</label>
+        <input asp-for="Form.Password">
+        <span asp-validation-for="Form.Password"></span>
+    </div>
+    <div class="field flex-row">
+        <button type="submit">Sign In</button>
+        <a asp-page="/Account/Register" asp-route-returnUrl="@Model.Form.ReturnUrl">Register</a>
+    </div>
 </form>
