@@ -7,3 +7,5 @@ TrickingLibrary.Api/ffmpeg/ffmpeg.exe
 TrickingLibrary.Api/tempkey.jwk
 *.user
 TrickingLibrary.Api11
+web-client/server.cert
+web-client/server.key
