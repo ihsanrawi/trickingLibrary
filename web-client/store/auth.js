@@ -1,5 +1,6 @@
 const initState = () => ({
   user: null,
+  profile: null,
   loading: true
 })
 
@@ -18,6 +19,9 @@ export const mutations = {
   saveUser(state, {user}) {
     state.user = user
   },
+  saveProfile(state, {profile}) {
+    state.profile = profile
+  },
   finish(state) {
     state.loading = false
   }
@@ -32,10 +36,12 @@ export const actions = {
           return this.$auth.getUser()
         }
       })
-      .then(user => {
+      .then(async user => {
         if (user) {
           commit('saveUser', {user})
           this.$axios.setToken(`Bearer ${user.access_token}`)
+          const profile = await this.$axios.get('/api/users/me')
+          commit('saveProfile', {profile})
         }
       })
       .catch(err => {
@@ -46,5 +52,30 @@ export const actions = {
         }
       })
       .finally(() => commit('finish'))
-  }
+  },
+  _watchUserLoaded({state, getters}, action) {
+    return new Promise((resolve, reject) => {
+      if(state.loading) {
+        console.log("start watching")
+        const unwatch = this.watch(
+          (store) => store.auth.loading,
+          (newValue, oldValue) => {
+            if(newValue) {
+              unwatch();
+
+              if(!getters.authenticated) {
+                this.$auth.signinRedirect()
+              } else if(!newValue) {
+                console.log("user finish loading executing action")
+                resolve(action())
+              }
+            }
+          }
+        )
+      } else {
+        console.log("user finish loading executing action")
+        resolve(action())
+      }
+    })
+  },
 }
