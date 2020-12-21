@@ -23,7 +23,10 @@ namespace TrickingLibrary.Api.Pages.Account
             if (!ModelState.IsValid)
                 return Page();
             
-            var user = new IdentityUser(Form.Email);
+            var user = new IdentityUser(Form.Username)
+            {
+                Email = Form.Email
+            };
 
             var createUserResult = await userManager.CreateAsync(user, Form.Password);
             
@@ -40,6 +43,7 @@ namespace TrickingLibrary.Api.Pages.Account
         {
             [Required] public string ReturnUrl { get; set; }
             [Required] public string Email { get; set; }
+            [Required] public string Username { get; set; }
 
             [Required]
             [DataType(DataType.Password)]

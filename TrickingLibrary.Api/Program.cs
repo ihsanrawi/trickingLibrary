@@ -28,6 +28,18 @@ namespace TrickingLibrary.Api
 
                 if (env.IsDevelopment())
                 {
+                    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                    var testUser = new IdentityUser("test"){Email = "test@test.com"};
+                    userMgr.CreateAsync(testUser, "password").GetAwaiter().GetResult();
+
+                    var mod = new IdentityUser("mod"){Email = "mod@test.com"};
+                    userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
+                    userMgr.AddClaimAsync(mod, 
+                            new Claim(TrickingLibraryConstants.Claims.Role, 
+                                TrickingLibraryConstants.Roles.Mod))
+                        .GetAwaiter()
+                        .GetResult();
+                    
                     ctx.Add(new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"});
                     ctx.Add(new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"});
                     ctx.Add(new Difficulty {Id = "hard", Name = "Hard", Description = "Hard Test"});
@@ -72,6 +84,7 @@ namespace TrickingLibrary.Api
                             ThumbLink = "one.jpg"
                         },
                         VideoProcessed = true,
+                        UserId = testUser.Id
                     });
                     ctx.Add(new Submission
                     {
@@ -83,6 +96,7 @@ namespace TrickingLibrary.Api
                             ThumbLink = "two.jpg"
                         },
                         VideoProcessed = true,
+                        UserId = testUser.Id
                     });
                     ctx.Add(new ModerationItem
                     {
@@ -90,19 +104,6 @@ namespace TrickingLibrary.Api
                         Type = ModerationTypes.Trick,
                     });
                     ctx.SaveChanges();
-
-
-                    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                    var user = new IdentityUser("test@test.com");
-                    userMgr.CreateAsync(user, "password").GetAwaiter().GetResult();
-
-                    var mod = new IdentityUser("mod@test.com");
-                    userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
-                    userMgr.AddClaimAsync(mod, 
-                            new Claim(TrickingLibraryConstants.Claims.Role, 
-                                TrickingLibraryConstants.Roles.Mod))
-                        .GetAwaiter()
-                        .GetResult();
                 }
             }
 

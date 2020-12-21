@@ -10,6 +10,11 @@
     <h3>Register</h3>
     <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl">
     <div class="field">
+        <label asp-for="Form.Username">Username</label>
+        <input asp-for="Form.Username">
+        <span asp-validation-for="Form.Username"></span>
+    </div>
+    <div class="field">
         <label asp-for="Form.Email">Email</label>
         <input asp-for="Form.Email">
         <span asp-validation-for="Form.Email"></span>
