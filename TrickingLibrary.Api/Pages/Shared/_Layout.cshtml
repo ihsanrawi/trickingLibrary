@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -6,11 +6,12 @@
     <title>@ViewData["Title"]</title>
 
     <style>
-        *{
-            font-family: "Roboto", sans-serif;
+        * {
+            font-family: "Roboto", sans-serif !important;
             box-sizing: border-box;
         }
-        body{
+
+        body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -18,13 +19,13 @@
             align-items: center;
             background-color: #212121;
         }
-        
+
         .title {
             text-align: center;
             color: #fff;
             font-size: 32px;
         }
-        
+
         form {
             display: flex;
             flex-direction: column;
@@ -34,20 +35,21 @@
             width: 100%;
             margin: 0 1rem;
             border-radius: 5px;
-            box-shadow: 0 1px 8px 1px #fafafa;
+            box-shadow: 0 1px 8px 1px #FAFAFA;
         }
-        
+
         .field {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            margin-bottom: .5rem;
         }
-        
-        .field > label{
+
+        .field > label {
             font-size: 14px;
             font-weight: bold;
         }
-        
+
         .field > input {
             margin-bottom: .25rem;
             width: 100%;
@@ -59,26 +61,26 @@
             font-size: 16px;
             border-radius: 5px;
         }
-        
+
         .field > input:focus {
             outline: none;
             border: 1px solid #1976d2;
         }
-        
+
         .field > span {
             font-size: 13px;
             color: #E53935;
         }
-        
+
         .flex-row {
             flex-direction: row;
             justify-content: space-evenly;
         }
-        
+
         hr {
             width: 100%;
         }
-        
+
         .field > button {
             height: 36px;
             min-width: 64px;
@@ -87,11 +89,12 @@
             border-radius: 5px;
             border: 1px solid #1976d2;
         }
-        
-        .field > a {
+
+        .field > a{
             text-decoration: none;
         }
     </style>
+
 </head>
 <body>
 <h3 class="title">Tricking Library</h3>

@@ -1,21 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TrickingLibrary.Api.BackgroundServices;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Data;
 
@@ -43,13 +36,10 @@ namespace TrickingLibrary.Api
 
             services.AddHostedService<VideoEditingBackgroundService>()
                 .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
-                .AddSingleton<VideoManager>();
-            
-            services.AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
+                .AddSingleton<VideoManager>()
+                .AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
                     .AllowAnyOrigin()
                     .AllowAnyMethod()));
-
-            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -69,15 +59,6 @@ namespace TrickingLibrary.Api
 
             app.UseAuthorization();
 
-            
-            app.UseSwagger();
-            app.UseSwaggerUI(x =>
-            {
-                x.RoutePrefix = "";
-                x.DocumentTitle = "Tricking Library API";
-                x.SwaggerEndpoint("/swagger/v1/swagger.json", "TrickingLibrary Api V1");
-            });
-            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
@@ -94,7 +75,7 @@ namespace TrickingLibrary.Api
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
-                    
+
                     if (_env.IsDevelopment())
                     {
                         options.Password.RequireDigit = false;
@@ -127,13 +108,13 @@ namespace TrickingLibrary.Api
                 {
                     new IdentityResources.OpenId(),
                     new IdentityResources.Profile(),
-                    new IdentityResource(TrickingLibraryConstants.IdentityResources.RoleScope, 
-                        new []{TrickingLibraryConstants.Claims.Role}), 
+                    new IdentityResource(TrickingLibraryConstants.IdentityResources.RoleScope,
+                        new[] {TrickingLibraryConstants.Claims.Role}),
                 });
 
                 identityServerBuilder.AddInMemoryApiScopes(new ApiScope[]
                 {
-                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName, 
+                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName,
                         new[]
                         {
                             JwtClaimTypes.PreferredUserName,
@@ -161,7 +142,7 @@ namespace TrickingLibrary.Api
                             IdentityServerConstants.StandardScopes.OpenId,
                             IdentityServerConstants.StandardScopes.Profile,
                             IdentityServerConstants.LocalApi.ScopeName,
-                            TrickingLibraryConstants.IdentityResources.RoleScope,
+                            TrickingLibraryConstants.IdentityResources.RoleScope
                         },
 
                         RequirePkce = true,
@@ -182,7 +163,7 @@ namespace TrickingLibrary.Api
                 {
                     var is4Policy = options.GetPolicy(IdentityServerConstants.LocalApi.PolicyName);
                     policy.Combine(is4Policy);
-                    policy.RequireClaim(TrickingLibraryConstants.Claims.Role, 
+                    policy.RequireClaim(TrickingLibraryConstants.Claims.Role,
                         TrickingLibraryConstants.Roles.Mod);
                 });
             });

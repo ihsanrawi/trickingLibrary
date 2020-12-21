@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
@@ -53,18 +52,7 @@ namespace TrickingLibrary.Api.Controllers
                                                       return content
                                                          .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
                                                   });
-            
-            /*
-            // another way of aggregating comment
-            comment.HtmlContent = comment.Content;
 
-            foreach (Match match in regex.Matches(comment.Content))
-            {
-                var tag = match.Groups["tag"].Value;
-                comment.HtmlContent = comment.HtmlContent
-                    .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
-            }*/
-            
             comment.ModerationItemId = id;
             _ctx.Add(comment);
             await _ctx.SaveChangesAsync();

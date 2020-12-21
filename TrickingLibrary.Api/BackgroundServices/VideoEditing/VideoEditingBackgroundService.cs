@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -39,8 +37,8 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
             {
                 var message = await _channelReader.ReadAsync(stoppingToken);
                 var inputPath = _videoManager.TemporarySavePath(message.Input);
-                var outputConvertedName = _videoManager.GenerateConvertedFileName();
-                var outputThumbnailName = _videoManager.GenerateThumbnailFileName();
+                var outputConvertedName = VideoManager.GenerateConvertedFileName();
+                var outputThumbnailName = VideoManager.GenerateThumbnailFileName();
                 var outputConvertedPath = _videoManager.TemporarySavePath(outputConvertedName);
                 var outputThumbnailPath = _videoManager.TemporarySavePath(outputThumbnailName);
                 try

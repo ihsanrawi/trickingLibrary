@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TrickingLibrary.Api.BackgroundServices;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Form;
 using TrickingLibrary.Data;
@@ -44,7 +42,6 @@ namespace TrickingLibrary.Api.Controllers
                 return BadRequest();
             }
 
-            // Todo: Automapper??
             var submission = new Submission
             {
                 TrickId = submissionForm.TrickId,

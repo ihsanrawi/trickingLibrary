@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace TrickingLibrary.Api.Pages.Account
 {
-    public class Registeer : PageModel
+    public class Register : PageModel
     {
         [BindProperty] public RegisterForm Form { get; set; }
 
@@ -18,21 +18,18 @@ namespace TrickingLibrary.Api.Pages.Account
         public async Task<IActionResult> OnPostAsync(
             [FromServices] UserManager<IdentityUser> userManager,
             [FromServices] SignInManager<IdentityUser> signInManager)
-        
         {
             if (!ModelState.IsValid)
                 return Page();
-            
-            var user = new IdentityUser(Form.Username)
-            {
-                Email = Form.Email
-            };
+
+            var user = new IdentityUser(Form.Username) {Email = Form.Email};
 
             var createUserResult = await userManager.CreateAsync(user, Form.Password);
-            
+
             if (createUserResult.Succeeded)
             {
                 await signInManager.SignInAsync(user, true);
+
                 return Redirect(Form.ReturnUrl);
             }
 
@@ -48,7 +45,7 @@ namespace TrickingLibrary.Api.Pages.Account
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
-            
+
             [Required]
             [DataType(DataType.Password)]
             [Compare(nameof(Password))]
