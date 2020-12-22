@@ -3,6 +3,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
@@ -22,7 +24,9 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<ModerationItem> All() => _ctx.ModerationItems.ToList();
+        public IEnumerable<ModerationItem> All() => _ctx.ModerationItems
+            .Where(x => !x.Deleted)
+            .ToList();
 
         [HttpGet("{id}")]
         public ModerationItem Get(int id) => _ctx.ModerationItems.FirstOrDefault(x => x.Id.Equals(id));
@@ -67,18 +71,44 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpPost("{id}/reviews")]
-        public async Task<IActionResult> Review(int id, [FromBody] Review review)
+        public async Task<IActionResult> Review(int id, 
+            [FromBody] ReviewForm reviewForm,
+            [FromServices] VersionMigrationContext migrationContext)
         {
-            if (!_ctx.ModerationItems.Any(x => x.Id == id))
+            var modItem = _ctx.ModerationItems
+                .Include(x => x.Reviews)
+                .FirstOrDefault(x => x.Id == id);
+            
+            if (modItem == null)
             {
                 return NoContent();
             }
 
-            review.ModerationItemId = id;
+            if (modItem.Deleted)
+            {
+                return BadRequest("Moderation item no longer exists.");
+            }
+            
+            // Todo:: make this async safe
+            var review = new Review
+            {
+                ModerationItemId = id,
+                Comment = reviewForm.Comment,
+                Status = reviewForm.Status,
+            };
+            
             _ctx.Add(review);
-            await _ctx.SaveChangesAsync();
 
-            return Ok(review);
+            // Todo:: Use configuration to replace the magic '3'
+            if (modItem.Reviews.Count >= 3)
+            {
+                migrationContext.Migrate(modItem.Target, modItem.TargetVersion, modItem.Type);
+                modItem.Deleted = true;
+            }
+            
+            await _ctx.SaveChangesAsync();
+            
+            return Ok(ReviewViewModel.Create(review));
         }
     }
 }

@@ -35,15 +35,17 @@ namespace TrickingLibrary.Api
                         .GetAwaiter()
                         .GetResult();
 
-                    ctx.Add(new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"});
-                    ctx.Add(new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"});
-                    ctx.Add(new Difficulty {Id = "hard", Name = "Hard", Description = "Hard Test"});
-                    ctx.Add(new Category {Id = "kick", Name = "Kick", Description = "Kick Test"});
-                    ctx.Add(new Category {Id = "flip", Name = "Flip", Description = "Flip Test"});
-                    ctx.Add(new Category {Id = "transition", Name = "Transition", Description = "Transition Test"});
+                    ctx.Add(new Difficulty {Slug = "easy", Version = 1, Active = true, Name = "Easy", Description = "Easy Test"});
+                    ctx.Add(new Difficulty {Slug = "medium", Version = 1, Active = true, Name = "Medium", Description = "Medium Test"});
+                    ctx.Add(new Difficulty {Slug = "hard", Version = 1, Active = true, Name = "Hard", Description = "Hard Test"});
+                    ctx.Add(new Category {Slug = "kick", Version = 1, Active = true, Name = "Kick", Description = "Kick Test"});
+                    ctx.Add(new Category {Slug = "flip", Version = 1, Active = true, Name = "Flip", Description = "Flip Test"});
+                    ctx.Add(new Category {Slug = "transition", Version = 1, Active = true, Name = "Transition", Description = "Transition Test"});
                     ctx.Add(new Trick
                     {
-                        Id = "backwards-roll",
+                        Slug = "backwards-roll",
+                        Active = true,
+                        Version = 1,
                         Name = "Backwards Roll",
                         Description = "This is a test backwards roll",
                         Difficulty = "easy",
@@ -51,7 +53,9 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new Trick
                     {
-                        Id = "forwards-roll",
+                        Slug = "forwards-roll",
+                        Active = true,
+                        Version = 1,
                         Name = "Forwards Roll",
                         Description = "This is a test forwards roll",
                         Difficulty = "easy",
@@ -59,7 +63,9 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new Trick
                     {
-                        Id = "back-flip",
+                        Slug = "back-flip",
+                        Active = true,
+                        Version = 1,
                         Name = "Back Flip",
                         Description = "This is a test back flip",
                         Difficulty = "medium",
