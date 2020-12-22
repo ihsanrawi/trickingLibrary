@@ -6,10 +6,4 @@ namespace TrickingLibrary.Api.Settings
         public string ImageUrl { get; set; }
         public string Provider { get; set; }
     }
-
-    public enum FileType
-    {
-        Image,
-        Video
-    }
 }
