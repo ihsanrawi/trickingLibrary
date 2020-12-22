@@ -31,7 +31,7 @@ namespace TrickingLibrary.Api.Controllers
             {
                 return BadRequest();
             }
-            
+
             var savePath = _fileManagerLocal.GetSavePath(file);
             if (string.IsNullOrEmpty(savePath))
             {

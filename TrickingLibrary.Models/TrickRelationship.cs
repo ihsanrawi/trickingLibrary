@@ -1,4 +1,4 @@
-namespace TrickingLibrary.Models
+﻿namespace TrickingLibrary.Models
 {
     public class TrickRelationship
     {

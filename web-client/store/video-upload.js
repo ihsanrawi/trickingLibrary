@@ -1,17 +1,17 @@
 ﻿const initState = () => ({
   uploadPromise: null,
-  uploadCompleted: false,
   uploadCancelSource: null,
+  uploadCompleted: false,
   active: false,
-  component: null,
+  component: null
 })
 
 export const state = initState
 
 export const mutations = {
-  activate(state, {component}){
+  activate(state, {component}) {
     state.active = true;
-    state.component = component;
+    state.component = component
   },
   hide(state) {
     state.active = false;
@@ -36,22 +36,22 @@ export const actions = {
       cancelToken: source.token
     })
       .then(({data}) => {
-        commit("completeUpload")
+        commit('completeUpload')
         return data
       })
       .catch(err => {
         if(this.$axios.isCancel(err)){
-          // Todo: Popup notify
+          // todo popup notify
         }
       })
 
     commit("setTask", {uploadPromise, source})
   },
   async cancelUpload({state, commit}) {
-    if(state.uploadPromise) {
-      if(state.uploadCompleted) {
+    if (state.uploadPromise) {
+      if (state.uploadCompleted) {
         commit('hide')
-        const video =await state.uploadPromise
+        const video = await state.uploadPromise
         await this.$axios.delete("/api/files/" + video)
       } else {
         state.uploadCancelSource.cancel()
@@ -67,8 +67,7 @@ export const actions = {
     }
 
     form.video = await state.uploadPromise;
-
-    await dispatch('submissions/createSubmission', {form}, {root:true});
-    commit('reset');
+    await dispatch('submissions/createSubmission', {form}, {root: true})
+    commit('reset')
   }
 }

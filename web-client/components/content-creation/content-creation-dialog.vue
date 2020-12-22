@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog :value="active" persistent width="700">
     <template v-slot:activator="{on}">
       <v-menu offset-y>
@@ -24,30 +24,28 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex';
-import TrickSteps from "./trick-steps";
-import SubmissionSteps from "./submission-steps";
-import DifficultyForm from "@/components/content-creation/difficulty-form";
-import CategoryForm from "@/components/content-creation/category-form";
+  import {mapState, mapMutations} from 'vuex';
+  import TrickSteps from "./trick-steps";
+  import SubmissionSteps from "./submission-steps";
+  import DifficultyForm from "./difficulty-form";
+  import CategoryForm from "./category-form";
 
-export default {
-  name: "content-creation-dialog",
-  components: {CategoryForm, DifficultyForm, SubmissionSteps, TrickSteps},
-  computed: {
-    ...mapState('video-upload', ['active', 'component']),
-    menuItems() {
-      return [
-        {component: TrickSteps, title: "Trick"},
-        {component: SubmissionSteps, title: "Submission"},
-        {component: DifficultyForm, title: "Difficulty"},
-        {component: CategoryForm, title: "Category"},
-      ]
-    }
-  },
-  methods: {
-    ...mapMutations('video-upload', ['activate']),
-  },
-}
+  export default {
+    name: "content-creation-dialog",
+    components: {CategoryForm, DifficultyForm, SubmissionSteps, TrickSteps},
+    computed: {
+      ...mapState('video-upload', ['active', 'component']),
+      menuItems() {
+        return [
+          {component: TrickSteps, title: "Trick"},
+          {component: SubmissionSteps, title: "Submission"},
+          {component: DifficultyForm, title: "Difficulty"},
+          {component: CategoryForm, title: "Category"},
+        ]
+      }
+    },
+    methods: mapMutations('video-upload', ['activate']),
+  }
 </script>
 
 <style scoped>

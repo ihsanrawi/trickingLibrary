@@ -1,19 +1,21 @@
-<template>
+﻿<template>
   <div class="video-container">
     <div class="play-button" :class="{'hide': playing}" @click="playing = !playing">
-      <v-icon size="76">mdi-play</v-icon>
+      <v-icon size="78">mdi-play</v-icon>
     </div>
-    <video ref="video" width="400"
+    <video ref="video"
            muted loop
-           :src="`${video.videoLink}`"
-           :poster="`${video.thumbLink}`"
-           :preload="none"
+           :src="video.videoLink"
+           :poster="video.thumbLink"
+           preload="none"
            playsinline
     ></video>
   </div>
 </template>
 
 <script>
+  //todo take care of the localhost address ^^^
+
   export default {
     name: "video-player",
     props: {
@@ -23,14 +25,14 @@
       }
     },
     data: () => ({
-      playing: false,
+      playing: false
     }),
     watch: {
       playing: function (v) {
         if (v) {
-          this.$refs.video.play();
+          this.$refs.video.play()
         } else {
-          this.$refs.video.pause();
+          this.$refs.video.pause()
         }
       }
     }

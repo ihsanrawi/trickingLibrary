@@ -1,10 +1,10 @@
-<template>
+﻿<template>
   <item-content-layout>
     <template v-slot:content>
       <div v-if="submissions">
-        <v-card class="mb-3" v-for="submission in submissions" :key="`${trick.id}-${submission.id}`">
-          <video-player :video="submission.video" :key="`v-${trick.id}-${submission.id}`"/>
-          <v-card-text>{{submission.description}}</v-card-text>
+        <v-card class="mb-3" v-for="s in submissions" :key="`${trick.id}-${s.id}`">
+          <video-player :video="s.video" :key="`v-${trick.id}-${s.id}`"/>
+          <v-card-text>{{s.description}}</v-card-text>
         </v-card>
       </div>
     </template>
@@ -16,12 +16,10 @@
         </v-chip>
       </div>
       <v-divider class="my-1"></v-divider>
-
       <div class="text-body-2">{{ trick.description }}</div>
       <v-divider class="my-1"></v-divider>
-
       <div v-for="rd in relatedData" v-if="rd.data.length > 0">
-        <div class="text-subtitle-1">{{ rd.title }}</div>
+        <div class="text-subtitle-1">{{rd.title}}</div>
         <v-chip-group>
           <v-chip v-for="d in rd.data" :key="rd.idFactory(d)" small :to="rd.routeFactory(d)">
             {{d.name}}
@@ -33,21 +31,22 @@
 </template>
 
 <script>
+  // todo: clean up submission id's ^^^
   import {mapState, mapGetters} from 'vuex';
-  import VideoPlayer from "@/components/video-player";
-  import ItemContentLayout from "@/components/item-content-layout";
+  import VideoPlayer from "../../components/video-player";
+  import ItemContentLayout from "../../components/item-content-layout";
 
   export default {
     components: {ItemContentLayout, VideoPlayer},
     data: () => ({
       trick: null,
-      difficulty: null,
+      difficulty: null
     }),
     computed: {
-      ...mapState('submissions', ["submissions"]),
-      ...mapState('tricks', ["categories", 'tricks']),
+      ...mapState('submissions', ['submissions']),
+      ...mapState('tricks', ['categories', 'tricks']),
       ...mapGetters('tricks', ['trickById', 'difficultyById']),
-      relatedData(){
+      relatedData() {
         return [
           {
             title: "Categories",
@@ -71,27 +70,22 @@
       },
     },
     async fetch() {
-      const trickId =this.$route.params.trick;
-      this.trick = this.trickById(trickId);
-      this.difficulty = this.difficultyById(this.trick.difficulty);
-      await this.$store.dispatch("submissions/fetchSubmissionForTrick", {trickId}, {root:true});
+      const trickId = this.$route.params.trick;
+      this.trick = this.trickById(this.$route.params.trick)
+      this.difficulty = this.difficultyById(this.trick.difficulty)
+      await this.$store.dispatch("submissions/fetchSubmissionsForTrick", {trickId}, {root: true})
     },
     head() {
-      if(!this.trick) return {}
+      if (!this.trick) return {}
 
       return {
         title: this.trick.name,
         meta: [
-          {
-            hid: 'description',
-            name: 'description',
-            content: this.trick.description
-          }
+          {hid: 'description', name: 'description', content: this.trick.description}
         ]
       }
-    },
+    }
   }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

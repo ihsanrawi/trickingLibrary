@@ -17,14 +17,16 @@ namespace TrickingLibrary.Api
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _env;
         private const string AllCors = "All";
 
-        public Startup(IWebHostEnvironment env, IConfiguration config)
+        public Startup(
+            IConfiguration config,
+            IWebHostEnvironment env)
         {
-            _env = env;
             _config = config;
+            _env = env;
         }
 
         public void ConfigureServices(IServiceCollection services)

@@ -1,10 +1,10 @@
-import {mapActions} from "vuex";
+﻿import {mapActions} from 'vuex';
 
 export const close = {
   methods: {
-    ...mapActions('video-upload',['cancelUpload']),
+    ...mapActions('video-upload', ['cancelUpload']),
     close() {
       this.cancelUpload()
-    },
-  },
+    }
+  }
 }

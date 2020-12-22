@@ -1,4 +1,4 @@
-namespace TrickingLibrary.Api.Settings
+﻿namespace TrickingLibrary.Api.Settings
 {
     public class FileSettings
     {

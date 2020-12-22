@@ -1,4 +1,4 @@
-﻿import {UPLOAD_TYPE} from "@/data/enum";
+﻿import {UPLOAD_TYPE} from "../data/enum";
 
 const initState = () => ({
   submissions: []
@@ -16,9 +16,9 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchSubmissionForTrick({commit}, {trickId}) {
+  async fetchSubmissionsForTrick({commit}, {trickId}){
     const submissions = await this.$axios.$get(`/api/tricks/${trickId}/submissions`);
-    commit("setSubmissions", {submissions});
+    commit("setSubmissions", {submissions})
   },
   createSubmission({state, commit, dispatch}, {form}) {
     return this.$axios.$post("/api/submissions", form)

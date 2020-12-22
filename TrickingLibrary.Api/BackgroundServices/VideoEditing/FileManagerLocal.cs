@@ -14,14 +14,16 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
         private readonly IOptionsMonitor<FileSettings> _fileSettingsMonitor;
         private readonly IWebHostEnvironment _env;
 
-        public FileManagerLocal(IOptionsMonitor<FileSettings> fileSettingsMonitor, IWebHostEnvironment env)
+        public FileManagerLocal(
+            IOptionsMonitor<FileSettings> fileSettingsMonitor,
+            IWebHostEnvironment env)
         {
             _fileSettingsMonitor = fileSettingsMonitor;
             _env = env;
         }
 
-        private string WorkingDirectory => _env.WebRootPath;
         private static string TempPrefix => TrickingLibraryConstants.Files.TempPrefix;
+        private string WorkingDirectory => _env.WebRootPath;
 
         public string GetFFMPEGPath() => Path.Combine(_env.ContentRootPath, "ffmpeg", "ffmpeg.exe");
         public string GetFileUrl(string fileName, FileType fileType)
@@ -57,9 +59,9 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
 
         public string GetSavePath(string fileName)
         {
-            return !_env.IsDevelopment() ? null : Path.Combine(WorkingDirectory, fileName);
+            return Path.Combine(WorkingDirectory, fileName);
         }
- 
+
         public async Task<string> SaveTemporaryFile(IFormFile video)
         {
             var fileName = string.Concat(TempPrefix, DateTime.Now.Ticks, Path.GetExtension(video.FileName));

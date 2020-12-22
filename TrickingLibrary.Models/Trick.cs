@@ -10,7 +10,7 @@ namespace TrickingLibrary.Models
 
         public IList<TrickRelationship> Prerequisites { get; set; }
         public IList<TrickRelationship> Progressions { get; set; }
-        
+
         public IList<TrickCategory> TrickCategories { get; set; }
     }
 }

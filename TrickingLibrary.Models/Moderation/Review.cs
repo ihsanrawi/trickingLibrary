@@ -1,4 +1,4 @@
-namespace TrickingLibrary.Models.Moderation
+﻿namespace TrickingLibrary.Models.Moderation
 {
     public class Review : BaseModel<int>
     {
@@ -10,7 +10,7 @@ namespace TrickingLibrary.Models.Moderation
     }
 
     public enum ReviewStatus
-    {    
+    {
         Approved = 0,
         Rejected = 1,
         Waiting = 2,

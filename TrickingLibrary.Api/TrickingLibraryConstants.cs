@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using IdentityServer4;
 
 namespace TrickingLibrary.Api
@@ -25,7 +25,7 @@ namespace TrickingLibrary.Api
         {
             public const string Mod = nameof(Mod);
         }
-        
+
         public struct Files
         {
             public struct Providers
@@ -33,7 +33,7 @@ namespace TrickingLibrary.Api
                 public const string Local = nameof(Local);
                 public const string S3 = nameof(S3);
             }
-            
+
             public const string TempPrefix = "temp_";
             public const string ConvertedPrefix = "c";
             public const string ThumbnailPrefix = "t";
@@ -42,7 +42,6 @@ namespace TrickingLibrary.Api
             public static string GenerateConvertedFileName() => $"{ConvertedPrefix}{DateTime.Now.Ticks}.mp4";
             public static string GenerateThumbnailFileName() => $"{ThumbnailPrefix}{DateTime.Now.Ticks}.jpg";
             public static string GenerateProfileFileName() => $"{ProfilePrefix}{DateTime.Now.Ticks}.jpg";
-            
         }
     }
 }

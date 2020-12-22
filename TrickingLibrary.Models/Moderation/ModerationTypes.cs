@@ -1,6 +1,6 @@
-namespace TrickingLibrary.Models.Moderation
+﻿namespace TrickingLibrary.Models.Moderation
 {
-    public class ModerationTypes
+    public struct ModerationTypes
     {
         public const string Trick = "trick";
     }

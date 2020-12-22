@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using TrickingLibrary.Api;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Settings;
@@ -28,7 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 throw new Exception($"Invalid File Manager Provider: {settings.Provider}");
             }
-            
+
             return services;
         }
     }

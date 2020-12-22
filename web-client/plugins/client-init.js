@@ -1,4 +1,4 @@
-import {UserManager, WebStorageStateStore} from "oidc-client";
+﻿import {UserManager, WebStorageStateStore} from "oidc-client";
 
 export default async ({app, store}, inject) => {
   const userManager = new UserManager({
@@ -9,12 +9,12 @@ export default async ({app, store}, inject) => {
     scope: 'openid profile IdentityServerApi role',
     post_logout_redirect_uri: "https://localhost:3000",
     silent_redirect_uri: "https://localhost:3000/oidc/sign-in-silent-callback.html",
-    userStore: new WebStorageStateStore({store: window.localStorage})
+    userStore: new WebStorageStateStore({store: window.localStorage}),
   })
 
   inject('auth', userManager)
 
   app.fetch = () => {
-    store.dispatch('clientInit')
+    return store.dispatch('clientInit')
   }
 }
