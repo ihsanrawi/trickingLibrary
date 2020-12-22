@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -29,7 +30,12 @@ namespace TrickingLibrary.Api.Controllers
             .ToList();
 
         [HttpGet("{id}")]
-        public ModerationItem Get(int id) => _ctx.ModerationItems.FirstOrDefault(x => x.Id.Equals(id));
+        public object Get(int id) => _ctx.ModerationItems
+            .Include(x => x.Comments)
+            .Include(x => x.Reviews)
+            .Where(x => x.Id.Equals(id))
+            .Select(ModerationItemViewModel.Projection)
+            .FirstOrDefault();
 
         [HttpGet("{id}/comments")]
         public IEnumerable<object> GetComments(int id) =>
@@ -100,13 +106,21 @@ namespace TrickingLibrary.Api.Controllers
             _ctx.Add(review);
 
             // Todo:: Use configuration to replace the magic '3'
-            if (modItem.Reviews.Count >= 3)
+            try
             {
-                migrationContext.Migrate(modItem.Target, modItem.TargetVersion, modItem.Type);
-                modItem.Deleted = true;
+                if (modItem.Reviews.Count >= 3)
+                {
+                    migrationContext.Migrate(modItem);
+                    modItem.Deleted = true;
+                }
+            
+                await _ctx.SaveChangesAsync();
+            }
+            catch (VersionMigrationContext.InvalidVersionException e)
+            {
+                return BadRequest(e.Message);
             }
             
-            await _ctx.SaveChangesAsync();
             
             return Ok(ReviewViewModel.Create(review));
         }

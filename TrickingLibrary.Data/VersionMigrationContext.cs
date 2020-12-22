@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using TrickingLibrary.Models.Abstractions;
 using TrickingLibrary.Models.Moderation;
 
@@ -12,31 +11,53 @@ namespace TrickingLibrary.Data
 
         public VersionMigrationContext(AppDbContext ctx) => _ctx = ctx;
 
-        public void Migrate(string targetId, int targetVersion, string targetType)
+        public void Migrate(ModerationItem modItem)
         {
-            var (current, next) = ResolveCurrentAndNextEntities(targetId, targetVersion, targetType);
-
+            var source = GetSource(modItem.Type);
+                        
+            var current = source.FirstOrDefault(x => x.Id == modItem.Current);
+            var target = source.FirstOrDefault(x => x.Id == modItem.Target);
+            
+            if (target == null)
+            {
+                throw new InvalidOperationException("Target not found");
+            }
+            
             if (current != null)
             {
+                if (target.Version - current.Version <= 0)
+                {
+                    throw new InvalidVersionException($"Current Version is {current.Version}, Target Version is {target.Version}, for {modItem.Type}");
+                }
+
                 current.Active = false;
+
+                var currentModerationItem = _ctx.ModerationItems
+                    .Where(x => !x.Deleted && x.Type == modItem.Type && x.Id != modItem.Id)
+                    .ToList();
+
+                foreach (var outdatedModItem in currentModerationItem)
+                {
+                    outdatedModItem.Current = target.Id;
+                }
             }
 
-            next.Active = true;
-            next.Temporary = false;
-            
-            // Todo:: Role Id's of temporary version
+            target.Active = true;
         }
 
-        private (VersionedModel Current, VersionedModel Next) ResolveCurrentAndNextEntities(
-            string targetId, int targetVersion, string targetType)
+        private IQueryable<VersionedModel> GetSource(string type)
         {
-            if (targetType != ModerationTypes.Trick) throw new ArgumentException(nameof(targetType));
-            
-            var current = _ctx.Tricks.FirstOrDefault(x => x.Slug == targetId && x.Active);
-            var next = _ctx.Tricks.FirstOrDefault(x => x.Slug == targetId && x.Version == targetVersion);
+            if (type != ModerationTypes.Trick) throw new ArgumentException(nameof(type));
 
-            return (current, next);
+            return _ctx.Tricks;
+        }
+        
+        public class InvalidVersionException : Exception
+        {
+            public InvalidVersionException(string message) : base(message)
+            {
 
+            }
         }
     }
 }

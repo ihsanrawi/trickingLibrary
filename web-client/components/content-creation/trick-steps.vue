@@ -66,13 +66,23 @@
         {text: "Baz", value: 3},
       ]
     }),
+    created() {
+      if(this.editing) {
+        Object.assign(this.form, this.editPayload)
+      }
+    },
     computed: {
+      ...mapState('video-upload', ['editing', 'editPayload']),
       ...mapGetters('tricks', ['categoryItems', 'difficultyItems', 'trickItems']),
     },
     methods: {
-      ...mapActions('tricks', ['createTrick']),
+      ...mapActions('tricks', ['createTrick', 'updateTrick']),
       async save() {
-        await this.createTrick({form: this.form})
+        if (this.editing) {
+          await this.updateTrick({form: this.form})
+        } else {
+          await this.createTrick({form: this.form})
+        }
         this.close();
       },
     }

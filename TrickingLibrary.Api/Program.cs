@@ -35,44 +35,47 @@ namespace TrickingLibrary.Api
                         .GetAwaiter()
                         .GetResult();
 
-                    ctx.Add(new Difficulty {Slug = "easy", Version = 1, Active = true, Name = "Easy", Description = "Easy Test"});
-                    ctx.Add(new Difficulty {Slug = "medium", Version = 1, Active = true, Name = "Medium", Description = "Medium Test"});
-                    ctx.Add(new Difficulty {Slug = "hard", Version = 1, Active = true, Name = "Hard", Description = "Hard Test"});
-                    ctx.Add(new Category {Slug = "kick", Version = 1, Active = true, Name = "Kick", Description = "Kick Test"});
-                    ctx.Add(new Category {Slug = "flip", Version = 1, Active = true, Name = "Flip", Description = "Flip Test"});
-                    ctx.Add(new Category {Slug = "transition", Version = 1, Active = true, Name = "Transition", Description = "Transition Test"});
+                    ctx.Add(new Difficulty {Id = 1, Slug = "easy", Version = 1, Active = true, Name = "Easy", Description = "Easy Test"});
+                    ctx.Add(new Difficulty {Id = 2, Slug = "medium", Version = 1, Active = true, Name = "Medium", Description = "Medium Test"});
+                    ctx.Add(new Difficulty {Id = 3, Slug = "hard", Version = 1, Active = true, Name = "Hard", Description = "Hard Test"});
+                    ctx.Add(new Category {Id = 1, Slug = "kick", Version = 1, Active = true, Name = "Kick", Description = "Kick Test"});
+                    ctx.Add(new Category {Id = 2, Slug = "flip", Version = 1, Active = true, Name = "Flip", Description = "Flip Test"});
+                    ctx.Add(new Category {Id = 3, Slug = "transition", Version = 1, Active = true, Name = "Transition", Description = "Transition Test"});
                     ctx.Add(new Trick
                     {
+                        Id = 1,
                         Slug = "backwards-roll",
                         Active = true,
                         Version = 1,
                         Name = "Backwards Roll",
                         Description = "This is a test backwards roll",
                         Difficulty = "easy",
-                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}}
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}}
                     });
                     ctx.Add(new Trick
                     {
+                        Id = 2,
                         Slug = "forwards-roll",
                         Active = true,
                         Version = 1,
                         Name = "Forwards Roll",
                         Description = "This is a test forwards roll",
                         Difficulty = "easy",
-                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}}
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}}
                     });
                     ctx.Add(new Trick
                     {
+                        Id = 3,
                         Slug = "back-flip",
                         Active = true,
                         Version = 1,
                         Name = "Back Flip",
                         Description = "This is a test back flip",
                         Difficulty = "medium",
-                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}},
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}},
                         Prerequisites = new List<TrickRelationship>
                         {
-                            new TrickRelationship {PrerequisiteId = "backwards-roll"}
+                            new TrickRelationship {PrerequisiteId = 1}
                         }
                     });
                     ctx.Add(new Submission
@@ -101,7 +104,7 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new ModerationItem
                     {
-                        Target = "forwards-roll",
+                        Target = 3,
                         Type = ModerationTypes.Trick,
                     });
                     ctx.SaveChanges();

@@ -1,5 +1,4 @@
-﻿﻿
-<template>
+﻿<template>
   <div>
     <div v-if="item">
       {{item.description}}
@@ -26,7 +25,10 @@
 
             <v-text-field label="Review Comment" v-model="reviewComment"></v-text-field>
           </v-card-text>
-          <v-card-actions class="justify-center">
+          <div v-if="outdated">
+            Outdated
+          </div>
+          <v-card-actions v-else class="justify-center">
             <v-btn v-for="action in reviewActions"
                    :color="reviewStatusColor(action.status)"
                    :key="`ra-${action.title}`"
@@ -73,23 +75,25 @@
   export default {
     components: {CommentSection},
     data: () => ({
+      current: null,
       item: null,
       comments: [],
       reviews: [],
       reviewComment: "",
       replyId: 0,
     }),
-    created() {
-      const {modId, type, trickId} = this.$route.params
-      const endpoint = endpointResolver(type)
-      this.$axios.$get(`/api/${endpoint}/${trickId}`)
+    async created() {
+      const {modId} = this.$route.params
+
+      const modItem = await this.$axios.$get(`/api/moderation-items/${modId}`)
+      this.comments = modItem.comments;
+      this.reviews = modItem.reviews;
+
+      const endpoint = endpointResolver(modItem.type)
+      this.$axios.$get(`/api/${endpoint}/${modItem.current}`)
+        .then((item) => this.current = item)
+      this.$axios.$get(`/api/${endpoint}/${modItem.target}`)
         .then((item) => this.item = item)
-
-      this.$axios.$get(`/api/moderation-items/${modId}/comments`)
-        .then((comments) => this.comments = comments)
-
-      this.$axios.$get(`/api/moderation-items/${modId}/reviews`)
-        .then((reviews) => this.reviews = reviews)
     },
     methods: {
       sendComment(content) {
@@ -122,7 +126,10 @@
       },
       approveCount() {
         return this.reviews.filter(x => x.status === REVIEW_STATUS.APPROVED).length
-      }
+      },
+      outdated() {
+        return this.current && this.item && this.item.version - this.current.version <= 0
+      },
     }
   }
 </script>
