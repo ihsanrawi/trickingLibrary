@@ -35,9 +35,9 @@ namespace TrickingLibrary.Api.Controllers
         public async Task<IActionResult> Create(
             [FromBody] SubmissionForm submissionForm,
             [FromServices] Channel<EditVideoMessage> channel,
-            [FromServices] VideoManager videoManager)
+            [FromServices] IFileManager fileManager)
         {
-            if (!videoManager.TemporaryFileExists(submissionForm.Video))
+            if (!fileManager.TemporaryFileExists(submissionForm.Video))
             {
                 return BadRequest();
             }
